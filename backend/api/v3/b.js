@@ -1,8 +1,12 @@
 const express = require("express");
 const fs = require("fs");
+const { checkID, blankBinCheck } = require("../../utils");
 const router = express.Router();
+const middleware = require('../../utils');
 
 router.use(express.json());
+router.use(middleware.delay);
+
 
 router.get("/", (request, response) => {
     let allUsers = fs.readdirSync('./backend/bins');
@@ -16,32 +20,22 @@ router.get("/", (request, response) => {
     response.json(allBins);
 });
 
-router.get("/:id", (request, response) => {
-    try {
-        const { id } = request.params;
-        let body = fs.readFileSync(`./backend/bins/${id}.json`, {encoding:'utf8', flag:'r'});
-        body = JSON.parse(body);
-        response.json(body);
-    } catch (e) {
-        response.status(404).json({ message: "!!!Error!!! ID Not Found"});
-    }
+router.get("/:id", checkID, (request, response) => {
+    const { id } = request.params;
+    let body = fs.readFileSync(`./backend/bins/${id}.json`, {encoding:'utf8', flag:'r'});
+    body = JSON.parse(body);
+    response.json(body); 
 });
 
-router.post("/", (request, response) => {
+router.post("/", blankBinCheck, (request, response) => {
     const { body } = request;
     const id = Date.now();
-    try {
-        fs.writeFileSync(
-        `./backend/bins/${id}.json`,
-        JSON.stringify(body, null, 4)
-        );
-        response.status(201).send(`task added, name: ${id}`);
-    } catch (e) {
-        response.status(404).json({ message: "!!!Error!!! BIN Not Found"});
-    }
+    fs.writeFileSync(`./backend/bins/${id}.json`,JSON.stringify(body, null, 4)
+    );
+    response.status(201).send(`task added, name: ${id}`);
 });
 
-router.put("/:id", (request, response) => {
+router.put("/:id", checkID, (request, response) => {
     let allUsers = fs.readdirSync('./backend/bins');
     const { id } = request.params;
     const { body } = request;
@@ -54,7 +48,7 @@ router.put("/:id", (request, response) => {
         response.status(404).json({ message: "!!!Error!!! ID Not Found"});
 });
 
-router.delete('/:id',(request, response)=>{
+router.delete('/:id', checkID, (request, response)=>{
     let allUsers = fs.readdirSync('./backend/bins');
     const { id } = request.params;
     for(let i = 0; i< allUsers.length; i++){
