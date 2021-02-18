@@ -17,7 +17,7 @@ router.get("/", (request, response) => {
         body = JSON.parse(body);
         allBins.push(body);
     }
-    response.json(allBins);
+    response.status(200).json(allBins);
 });
 
 router.get("/:id", checkID, (request, response) => {
