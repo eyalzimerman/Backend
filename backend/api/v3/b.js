@@ -13,7 +13,7 @@ router.get("/", (request, response) => {
         body = JSON.parse(body);
         allBins.push(body);
     }
-    response.json(allBins);
+    response.status(200).json(allBins);
 });
 
 router.get("/:id", (request, response) => {
@@ -21,7 +21,7 @@ router.get("/:id", (request, response) => {
         const { id } = request.params;
         let body = fs.readFileSync(`./backend/bins/${id}.json`, {encoding:'utf8', flag:'r'});
         body = JSON.parse(body);
-        response.json(body);
+        response.status(200).json(body);
     } catch (e) {
         response.status(404).json({ message: "!!!Error!!! ID Not Found"});
     }
