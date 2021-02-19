@@ -33,8 +33,9 @@ router.get("/:id", checkID, (request, response) => {
         response.status(500).json({"message": "Server Error!", error: e });
     }
 });
-
-router.post("/", blankBinCheck, (request, response) => {
+router.post("/", (request, response) => {
+    const { body } = request;
+    const id = Date.now();
     try {
         const { body } = request;
         const id = Date.now();
