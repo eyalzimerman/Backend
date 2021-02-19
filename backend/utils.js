@@ -9,7 +9,7 @@ const blankBinCheck = (request, response, next) => {
     const bin = request.body;
     if(Object.keys(bin).length === 0) {
         response.status(404).send(({"message" : "Bin cannot be blank"}));
-    return;
+        return;
     }
     next();
 }
@@ -19,7 +19,7 @@ const checkID = (request, response, next) => {
     const {id} = request.params;
     if(!allUsers.includes(`${id}.json`)) {
         response.status(404).send(({"message" :"ID cannot found"}));
-    return;
+        return;
     }
     next();
 }
