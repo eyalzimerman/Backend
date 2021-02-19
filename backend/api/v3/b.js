@@ -64,7 +64,7 @@ router.put("/:id", checkID, blankBinCheck, (request, response) => {
 
 router.delete('/:id', checkID, (request, response)=>{
     try {
-        let allUsers = fs.readdirSync('./backend/bins/sdf');
+        let allUsers = fs.readdirSync('./backend/bins');
         const { id } = request.params;
         for(let i = 0; i< allUsers.length; i++){
             if (allUsers[i] === `${id}.json`) {

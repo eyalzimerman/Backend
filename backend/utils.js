@@ -14,9 +14,9 @@ const blankBinCheck = (request, response, next) => {
 }
 
 const checkID = (request, response, next) => {
-    let allUsers = fs.readdirSync('.backend/bins');
+    let allUsers = fs.readdirSync('./backend/bins');
     const {id} = Request.params;
-    if(!allUsers.includes(`%{id}.json`)) {
+    if(!allUsers.includes(`${id}.json`)) {
         response.status(404).send(({"message" :"ID cannot found"}));
     }
     next();
