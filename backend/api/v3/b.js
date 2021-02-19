@@ -19,7 +19,7 @@ router.get("/", (request, response) => {
         }
         response.status(200).json(allBins);
     } catch (e) {
-        response.status(500).json({"message": "Server Error!", error: e });
+        response.status(500).json({"message": "Internal Server Error!", "error": `${e}`});
     }
 });
 
@@ -30,19 +30,17 @@ router.get("/:id", checkID, (request, response) => {
         body = JSON.parse(body);
         response.status(200).json(body); 
     } catch (e) {
-        response.status(500).json({"message": "Server Error!", error: e });
+        response.status(500).json({"message": "Internal Server Error!", "error": `${e}`});
     }
 });
 router.post("/", blankBinCheck, (request, response) => {
-    const { body } = request;
-    const id = Date.now();
     try {
         const { body } = request;
         const id = Date.now();
         fs.writeFileSync(`./backend/bins/${id}.json`,JSON.stringify(body, null, 4));
         response.status(201).send(`task added, name: ${id}`);
     } catch (e) {
-        response.status(500).json({"message": "Server Error!", error: e });
+        response.status(500).json({"message": "Internal Server Error!", "error": `${e}`});
     }
 });
 
@@ -58,7 +56,7 @@ router.put("/:id", checkID, blankBinCheck, (request, response) => {
             }
         }
     } catch (e) {
-        response.status(500).json({"message": "Server Error!", error: e });
+        response.status(500).json({"message": "Internal Server Error!", "error": `${e}`});
     }
 });
 
@@ -73,7 +71,7 @@ router.delete('/:id', checkID, (request, response)=>{
             }
         }
     } catch (e) {
-        response.status(500).json({"message": "Server Error!", error: e });
+        response.status(500).json({"message": "Internal Server Error!", "error": `${e}`});
     }
 });
     
