@@ -6,7 +6,7 @@ const delay = (request, response, next) => {
 }
 
 const blankBinCheck = (request, response, next) => {
-    const bin = Request.body;
+    const bin = request.body;
     if(Object.keys(bin).length === 0) {
         response.status(404).send(({"message" : "Bin cannot be blank"}));
     }
@@ -14,9 +14,9 @@ const blankBinCheck = (request, response, next) => {
 }
 
 const checkID = (request, response, next) => {
-    let allUsers = fs.readdirSync('.backend/bins');
-    const {id} = Request.params;
-    if(!allUsers.includes(`%{id}.json`)) {
+    let allUsers = fs.readdirSync('./backend/bins');
+    const {id} = request.params;
+    if(!allUsers.includes(`${id}.json`)) {
         response.status(404).send(({"message" :"ID cannot found"}));
     }
     next();
