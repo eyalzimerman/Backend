@@ -7,57 +7,73 @@ const middleware = require('../../utils');
 router.use(express.json());
 router.use(middleware.delay);
 
-
 router.get("/", (request, response) => {
-    let allUsers = fs.readdirSync('./backend/bins');
-    let allBins = [];
-
-    for (let i = 0; i < allUsers.length; i++) {
-        let body = fs.readFileSync(`./backend/bins/${allUsers[i]}`, {encoding:'utf8', flag:'r'});
-        body = JSON.parse(body);
-        allBins.push(body);
+    try {
+        let allUsers = fs.readdirSync('./backend/bins');
+        let allBins = [];
+    
+        for (let i = 0; i < allUsers.length; i++) {
+            let body = fs.readFileSync(`./backend/bins/${allUsers[i]}`, {encoding:'utf8', flag:'r'});
+            body = JSON.parse(body);
+            allBins.push(body);
+        }
+        response.status(200).json(allBins);
+    } catch (e) {
+        response.status(500).json({"message": "Server Error!", error: e });
     }
-    response.status(200).json(allBins);
 });
 
 router.get("/:id", checkID, (request, response) => {
-    const { id } = request.params;
-    let body = fs.readFileSync(`./backend/bins/${id}.json`, {encoding:'utf8', flag:'r'});
-    body = JSON.parse(body);
-    response.json(body); 
+    try {
+        const { id } = request.params;
+        let body = fs.readFileSync(`./backend/bins/${id}.json`, {encoding:'utf8', flag:'r'});
+        body = JSON.parse(body);
+        response.status(200).json(body); 
+    } catch (e) {
+        response.status(500).json({"message": "Server Error!", error: e });
+    }
 });
 
 router.post("/", blankBinCheck, (request, response) => {
-    const { body } = request;
-    const id = Date.now();
-    fs.writeFileSync(`./backend/bins/${id}.json`,JSON.stringify(body, null, 4)
-    );
-    response.status(201).send(`task added, name: ${id}`);
+    try {
+        const { body } = request;
+        const id = Date.now();
+        fs.writeFileSync(`./backend/bins/${id}.json`,JSON.stringify(body, null, 4));
+        response.status(201).send(`task added, name: ${id}`);
+    } catch (e) {
+        response.status(500).json({"message": "Server Error!", error: e });
+    }
 });
 
-router.put("/:id", checkID, (request, response) => {
-    let allUsers = fs.readdirSync('./backend/bins');
-    const { id } = request.params;
-    const { body } = request;
+router.put("/:id", checkID, blankBinCheck, (request, response) => {
+    try {
+        let allUsers = fs.readdirSync('./backend/bins');
+        const { id } = request.params;
+        const { body } = request;
         for (let i = 0; i < allUsers.length; i++) {
             if (allUsers[i] === `${id}.json`) {
                     fs.writeFileSync(`./backend/bins/${id}.json`, JSON.stringify(body, null, 4));
-                    response.json(body);
+                    response.status(201).json(body);
             }
         }
-        response.status(404).json({ message: "!!!Error!!! ID Not Found"});
+    } catch (e) {
+        response.status(500).json({"message": "Server Error!", error: e });
+    }
 });
 
 router.delete('/:id', checkID, (request, response)=>{
-    let allUsers = fs.readdirSync('./backend/bins');
-    const { id } = request.params;
-    for(let i = 0; i< allUsers.length; i++){
-        if (allUsers[i] === `${id}.json`) {
-            fs.unlinkSync(`./backend/bins/${id}.json`);
-            response.send('removed');
+    try {
+        let allUsers = fs.readdirSync('./backend/bins/sdf');
+        const { id } = request.params;
+        for(let i = 0; i< allUsers.length; i++){
+            if (allUsers[i] === `${id}.json`) {
+                fs.unlinkSync(`./backend/bins/${id}.json`);
+                response.status(201).send('removed');
+            }
         }
+    } catch (e) {
+        response.status(500).json({"message": "Server Error!", error: e });
     }
-    response.status(404).json({ message: "!!!Error!!! ID Not Found"});
 });
-
+    
 module.exports = router;
