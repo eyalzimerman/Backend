@@ -52,7 +52,7 @@ router.put("/:id", checkID, blankBinCheck, checkBin, (request, response) => {
         for (let i = 0; i < allUsers.length; i++) {
             if (allUsers[i] === `${id}.json`) {
                     fs.writeFileSync(`./backend/bins/${id}.json`, JSON.stringify(body, null, 4));
-                    response.status(201).json(body);
+                    response.status(200).json(body);
             }
         }
     } catch (e) {
