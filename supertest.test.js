@@ -1,7 +1,8 @@
-const { json } = require("express");
 const request = require("supertest");
+const fs = require("fs");
 
 const app = require("./backend/app");
+let dataToDelete = [];
 
 describe("GET route", () => {
   const expectedBin = {
@@ -9,7 +10,7 @@ describe("GET route", () => {
       {
         priority: "1",
         date: "2021-02-15 08:01:50",
-        text: "fghfgbgg",
+        text: "eyal",
       },
     ],
   };
@@ -23,7 +24,7 @@ describe("GET route", () => {
     // Is the status code 200
     expect(response.status).toBe(200);
 
-    // Is the body equal expectedQuote
+    // Is the body equal expectedBin
     expect(response.body).toEqual(expectedBin);
   });
 
@@ -48,6 +49,11 @@ describe("GET route", () => {
   });
 });
 
+beforeAll(() => {
+  console.log("Test Start");
+  dataToDelete = [];
+});
+
 describe("POST route", () => {
   const binToPost = {
     priority: "1",
@@ -65,6 +71,7 @@ describe("POST route", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(expectedResponse);
+    dataToDelete.push(`${id}.json`);
   });
 
   it("Should not add a blanked bin with illegal body", async () => {
@@ -72,5 +79,94 @@ describe("POST route", () => {
 
     expect(response.status).toBe(400);
     expect(response.body).toEqual(binIllegalExpected);
+  });
+});
+
+afterAll(() => {
+  console.log("Tests ended");
+  let allUsers = fs.readdirSync("./backend/bins");
+  for (let i = 0; i < allUsers.length; i++) {
+    for (let j = 0; j < dataToDelete.length; j++) {
+      if (allUsers[i] === dataToDelete[j]) {
+        fs.unlinkSync(`./backend/bins/${allUsers[i]}`);
+      }
+    }
+  }
+});
+
+describe("PUT route", () => {
+  const binToUpdate = {
+    "my-todo": [
+      {
+        priority: "1",
+        date: "2021-02-15 08:01:50",
+        text: "eyal",
+      },
+    ],
+  };
+  const expectedUpdateBin = {
+    "my-todo": [
+      {
+        priority: "1",
+        date: "2021-02-15 08:01:50",
+        text: "eyal",
+      },
+    ],
+  };
+  const expectedIdError = { message: "ID cannot be found" };
+  const expectedBinError = { message: "Invalid ID" };
+  it("Should update a bin by a given id", async () => {
+    const response = await request(app)
+      .put("/api/v3/b/1613733860787")
+      .send(binToUpdate);
+
+    // Is the status code 200
+    expect(response.status).toBe(200);
+
+    // Is the body equal expectedBin
+    expect(response.body).toEqual(expectedUpdateBin);
+  });
+
+  it("Should not create new bin when updating", async () => {
+    let allUsers = fs.readdirSync("./backend/bins");
+    allUsersLengthBeforeUpdate = allUsers.length;
+    const response = await request(app)
+      .put("/api/v3/b/1613733860787")
+      .send(binToUpdate);
+
+    // Is the status code 200
+    expect(response.status).toBe(200);
+
+    // Is the body equal expectedBin
+    expect(response.body).toEqual(expectedUpdateBin);
+
+    allUsersLengthAfterUpdate = allUsers.length;
+
+    // Is the length of all bins is equal before and after update
+    expect(allUsersLengthBeforeUpdate).toEqual(allUsersLengthAfterUpdate);
+  });
+
+  it("Should return an error message with status code 400 for illegal id", async () => {
+    const response = await request(app)
+      .put("/api/v3/b/asdasd")
+      .send(binToUpdate);
+
+    // Is the status code 400
+    expect(response.status).toBe(400);
+
+    // Is the body equal expectedId
+    expect(response.body).toEqual(expectedIdError);
+  });
+
+  it("Should return an error message with status code 404 for not found bin", async () => {
+    const response = await request(app)
+      .put("/api/v3/b/1213733861187")
+      .send(binToUpdate);
+
+    // Is the status code 404
+    expect(response.status).toBe(404);
+
+    // Is the body equal expectedBin
+    expect(response.body).toEqual(expectedBinError);
   });
 });
