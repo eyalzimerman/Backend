@@ -51,7 +51,7 @@ router.post("/", blankBinCheck, (request, response) => {
       `./backend/bins/${id}.json`,
       JSON.stringify(body, null, 4)
     );
-    response.status(201).send(`task added, name: ${id}`);
+    response.status(200).send({ message: "task added successfully", id });
   } catch (e) {
     response
       .status(500)
@@ -70,7 +70,7 @@ router.put("/:id", checkID, checkBin, blankBinCheck, (request, response) => {
           `./backend/bins/${id}.json`,
           JSON.stringify(body, null, 4)
         );
-        response.status(201).json(body);
+        response.status(200).json(body);
       }
     }
   } catch (e) {

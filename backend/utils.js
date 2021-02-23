@@ -7,7 +7,7 @@ const delay = (request, response, next) => {
 const blankBinCheck = (request, response, next) => {
   const bin = request.body;
   if (Object.keys(bin).length === 0) {
-    response.status(404).send({ message: "Bin cannot be blank" });
+    response.status(400).send({ message: "Bin cannot be blank" });
     return;
   }
   next();
