@@ -67,7 +67,7 @@ router.delete('/:id', checkID, checkBin, (request, response)=>{
         for(let i = 0; i< allUsers.length; i++){
             if (allUsers[i] === `${id}.json`) {
                 fs.unlinkSync(`./backend/bins/${id}.json`);
-                response.status(201).send('removed');
+                response.status(200).send({"message": "removed bin!"});
             }
         }
     } catch (e) {

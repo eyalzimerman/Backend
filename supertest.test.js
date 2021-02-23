@@ -3,7 +3,7 @@ const fs = require("fs")
 const app = require("./backend/app");
 let dataToDelete =[];
 const expectedIDError = {message: "ID cannot be found"}
-    const expectedBinError = {message: "Bin cannot be found"}
+const expectedBinError = {message: "Bin cannot be found"}
 //test for get
 describe("GET route", () => {
     const expectedBin = {
@@ -141,7 +141,29 @@ it("Sholud return an error message with status code 404 for Bin not found", asyn
   expect(response.status).toBe(404);
   expect(response.body).toEqual(expectedBinError);
 });
+  });
 
+describe("Delete route", () => {
+  const expectedResponse = {"message": "removed bin!"}
+  it("Should delete a Bin by id", async () => {
+    const response = await request(app).delete("/api/v3/b/1234567890123")
+    
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(expectedResponse);
+  
+  });
+  it("Should return an error message with status code 400 for illegal ID", async () => {
+    const response = await request(app).delete("/api/v3/b/gfh");
+console.log(response);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual(expectedIDError);
+  });
 
+  it("Should return an error message with status code 404 for Bin not found", async () => {
+    const response = await request(app).delete("/api/v3/b/1111111111111");
+
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(expectedBinError);
+  });
 });
 
