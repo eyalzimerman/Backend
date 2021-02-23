@@ -3,7 +3,6 @@ const app = require("./backend/app");
 
 describe("GET route", () => {
     const expectedBin = {
-      
         "my-todo": [
             {
                 "priority": "1",
@@ -47,30 +46,23 @@ describe("GET route", () => {
   });
  
   
-  // describe("POST route", () => {
-  //   const quoteToPost = {
-  //     quote: "Peaky focking blinders.",
-  //     movie: " -Peaky Blinders",
-  //     year: 2017,
-  //   };
+  describe("POST route", () => {
+    const binToPost = {
+
+      priority: "1",
+      date: "2021-02-15 08:01:50",
+      text: "fghfgbgg"
+    };
+ 
   
-  //   const expectedResponse = {
-  //     success: true,
-  //     quote: {
-  //       id: 25,
-  //       quote: "Peaky focking blinders.",
-  //       movie: " -Peaky Blinders",
-  //       year: 2017,
-  //     },
-  //   };
+    it("Should post a new Bin successfuly", async () => {
+      const response = await request(app).post("/api/v3/b").send(binToPost);
+      const id= JSON.parse(response.text).id;
+      const expectedResponse = {"message":"task added, name", id}
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(expectedResponse);
   
-  //   it("Should post a new quote successfuly", async () => {
-  //     const response = await request(app).post("/quote").send(quoteToPost);
-  
-  //     expect(response.status).toBe(200);
-  //     expect(response.body.success).toBe(expectedResponse.success);
-  //     expect(response.body.quote).toEqual(expectedResponse.quote);
-  
-  //     await request(app).get(`/quote/${response.body.quote.id}`).expect(200);
-  //   });
-  // });
+      await request(app).get(`/api/v3/b/${response.body.id}`).expect(200);
+    });
+  });
