@@ -38,7 +38,7 @@ router.post("/", blankBinCheck, (request, response) => {
         const { body } = request;
         const id = Date.now();
         fs.writeFileSync(`./backend/bins/${id}.json`,JSON.stringify(body, null, 4));
-        response.status(200).send({"message":"task added, name",id : id});
+        response.status(200).send({"message":"task added successfully",id : id});
     } catch (e) {
         response.status(500).json({"message": "Internal Server Error!", "error": `${e}`});
     }

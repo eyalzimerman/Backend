@@ -47,22 +47,30 @@ describe("GET route", () => {
  
   
   describe("POST route", () => {
-    const binToPost = {
 
+    const binToPost = {
       priority: "1",
       date: "2021-02-15 08:01:50",
       text: "fghfgbgg"
     };
- 
-  
-    it("Should post a new Bin successfuly", async () => {
+    const binIllegal = {}
+    
+    it("Should post a new Bin successfully", async () => {
       const response = await request(app).post("/api/v3/b").send(binToPost);
       const id= JSON.parse(response.text).id;
-      const expectedResponse = {"message":"task added, name", id}
+      const expectedResponse = {"message":"task added successfully", id}
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(expectedResponse);
   
       await request(app).get(`/api/v3/b/${response.body.id}`).expect(200);
+    });
+
+    it("Should not add a blanked bin with illegal body", async () => {
+      const response = await request(app).post("/api/v3/b").send(binIllegal);
+      const binIllegalExpected = {"message" : "Bin cannot be blank"};
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual(binIllegalExpected);
     });
   });
