@@ -27,9 +27,9 @@ const checkBin = (request, response, next) => {
   const { id } = request.params;
   if (!allUsers.includes(`${id}.json`)) {
     response.status(404).send({ message: "Invalid ID" });
-    return;
+  } else {
+    next();
   }
-  next();
 };
 
 module.exports = {

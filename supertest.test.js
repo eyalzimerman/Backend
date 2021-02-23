@@ -170,3 +170,33 @@ describe("PUT route", () => {
     expect(response.body).toEqual(expectedBinError);
   });
 });
+
+describe("DELETE route", () => {
+  const expectResponse = { message: "task delete successfully" };
+  const expectedIdError = { message: "ID cannot be found" };
+  const expectedBinError = { message: "Invalid ID" };
+  it("Should delete a bin by id", async () => {
+    const response = await request(app).delete("/api/v3/b/4444444444444");
+    // Is the status code 200
+    expect(response.status).toBe(200);
+
+    // Is the body equal expectedBin
+    expect(response.body).toEqual(expectResponse);
+  });
+
+  it("Should return an error message with status code 400 for illegal id", async () => {
+    const response = await request(app).delete("/api/v3/b/asdasd");
+
+    // Is the status code 400
+    expect(response.status).toBe(400);
+
+    // Is the body equal expectedId
+    expect(response.body).toEqual(expectedIdError);
+  });
+
+  it("Should return an error message with status code 404 for Bin not found", async () => {
+    const response = await request(app).delete("/api/v3/b/1111111111111");
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(expectedBinError);
+  });
+});
