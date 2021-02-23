@@ -1,6 +1,6 @@
 const express = require("express");
 const fs = require("fs");
-const { checkID, blankBinCheck } = require("../../utils");
+const { checkID, blankBinCheck, checkBin } = require("../../utils");
 const router = express.Router();
 const middleware = require('../../utils');
 
@@ -23,7 +23,7 @@ router.get("/", (request, response) => {
     }
 });
 
-router.get("/:id", checkID, (request, response) => {
+router.get("/:id", checkID, checkBin, (request, response) => {
     try {
         const { id } = request.params;
         let body = fs.readFileSync(`./backend/bins/${id}.json`, {encoding:'utf8', flag:'r'});
@@ -44,7 +44,7 @@ router.post("/", blankBinCheck, (request, response) => {
     }
 });
 
-router.put("/:id", checkID, blankBinCheck, (request, response) => {
+router.put("/:id", checkID, blankBinCheck, checkBin, (request, response) => {
     try {
         let allUsers = fs.readdirSync('./backend/bins');
         const { id } = request.params;
@@ -60,7 +60,7 @@ router.put("/:id", checkID, blankBinCheck, (request, response) => {
     }
 });
 
-router.delete('/:id', checkID, (request, response)=>{
+router.delete('/:id', checkID, checkBin, (request, response)=>{
     try {
         let allUsers = fs.readdirSync('./backend/bins');
         const { id } = request.params;
