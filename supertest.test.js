@@ -50,9 +50,26 @@ describe("GET route", () => {
 });
 
 beforeAll(() => {
-  console.log("Test Start");
+  console.log("Tests Started");
   dataToDelete = [];
 });
+afterAll(() => {
+  console.log("Tests ended");
+});
+
+afterEach(() => {
+  let allUsers = fs.readdirSync("./backend/bins");
+  for (let i = 0; i < allUsers.length; i++) {
+    for (let j = 0; j < dataToDelete.length; j++) {
+      if (allUsers[i] === dataToDelete[j]) {
+        fs.unlinkSync(`./backend/bins/${allUsers[i]}`);
+      }
+    }
+  }
+});
+
+let allUsers = fs.readdirSync("./backend/bins");
+let allUsersLengthBeforeUpdateAndPost = allUsers.length;
 
 describe("POST route", () => {
   const binToPost = {
@@ -80,18 +97,6 @@ describe("POST route", () => {
     expect(response.status).toBe(400);
     expect(response.body).toEqual(binIllegalExpected);
   });
-});
-
-afterAll(() => {
-  console.log("Tests ended");
-  let allUsers = fs.readdirSync("./backend/bins");
-  for (let i = 0; i < allUsers.length; i++) {
-    for (let j = 0; j < dataToDelete.length; j++) {
-      if (allUsers[i] === dataToDelete[j]) {
-        fs.unlinkSync(`./backend/bins/${allUsers[i]}`);
-      }
-    }
-  }
 });
 
 describe("PUT route", () => {
@@ -128,8 +133,6 @@ describe("PUT route", () => {
   });
 
   it("Should not create new bin when updating", async () => {
-    let allUsers = fs.readdirSync("./backend/bins");
-    let allUsersLengthBeforeUpdate = allUsers.length;
     const response = await request(app)
       .put("/api/v3/b/1613733860787")
       .send(binToUpdate);
@@ -144,7 +147,9 @@ describe("PUT route", () => {
     let allUsersLengthAfterUpdate = allUsers.length;
 
     // Is the length of all bins is equal before and after update
-    expect(allUsersLengthBeforeUpdate).toEqual(allUsersLengthAfterUpdate);
+    expect(allUsersLengthBeforeUpdateAndPost).toEqual(
+      allUsersLengthAfterUpdate
+    );
   });
 
   it("Should return an error message with status code 400 for illegal id", async () => {
