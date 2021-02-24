@@ -15,8 +15,8 @@ describe("GET route", () => {
     ],
   };
 
-  const expectedIdError = { message: "ID cannot be found" };
-  const expectedBinError = { message: "Invalid ID" };
+  const expectedIdError = { message: "Invalid ID" };
+  const expectedBinError = { message: "ID cannot be found" };
 
   it("Should return a bin by a given id", async () => {
     const response = await request(app).get("/api/v3/b/1613733860787");
@@ -113,8 +113,8 @@ describe("PUT route", () => {
       },
     ],
   };
-  const expectedIdError = { message: "ID cannot be found" };
-  const expectedBinError = { message: "Invalid ID" };
+  const expectedBinError = { message: "ID cannot be found" };
+  const expectedIdError = { message: "Invalid ID" };
   it("Should update a bin by a given id", async () => {
     const response = await request(app)
       .put("/api/v3/b/1613733860787")
@@ -129,7 +129,7 @@ describe("PUT route", () => {
 
   it("Should not create new bin when updating", async () => {
     let allUsers = fs.readdirSync("./backend/bins");
-    allUsersLengthBeforeUpdate = allUsers.length;
+    let allUsersLengthBeforeUpdate = allUsers.length;
     const response = await request(app)
       .put("/api/v3/b/1613733860787")
       .send(binToUpdate);
@@ -140,7 +140,8 @@ describe("PUT route", () => {
     // Is the body equal expectedBin
     expect(response.body).toEqual(expectedUpdateBin);
 
-    allUsersLengthAfterUpdate = allUsers.length;
+    allUsers = fs.readdirSync("./backend/bins");
+    let allUsersLengthAfterUpdate = allUsers.length;
 
     // Is the length of all bins is equal before and after update
     expect(allUsersLengthBeforeUpdate).toEqual(allUsersLengthAfterUpdate);
@@ -172,16 +173,16 @@ describe("PUT route", () => {
 });
 
 describe("DELETE route", () => {
-  const expectResponse = { message: "task delete successfully" };
-  const expectedIdError = { message: "ID cannot be found" };
-  const expectedBinError = { message: "Invalid ID" };
+  const expectedResponse = { message: "task delete successfully" };
+  const expectedIdError = { message: "Invalid ID" };
+  const expectedBinError = { message: "ID cannot be found" };
   it("Should delete a bin by id", async () => {
-    const response = await request(app).delete("/api/v3/b/4444444444444");
+    const response = await request(app).delete("/api/v3/b/1111111111111");
     // Is the status code 200
     expect(response.status).toBe(200);
 
     // Is the body equal expectedBin
-    expect(response.body).toEqual(expectResponse);
+    expect(response.body).toEqual(expectedResponse);
   });
 
   it("Should return an error message with status code 400 for illegal id", async () => {
@@ -193,9 +194,8 @@ describe("DELETE route", () => {
     // Is the body equal expectedId
     expect(response.body).toEqual(expectedIdError);
   });
-
   it("Should return an error message with status code 404 for Bin not found", async () => {
-    const response = await request(app).delete("/api/v3/b/1111111111111");
+    const response = await request(app).delete("/api/v3/b/1111111121111");
     expect(response.status).toBe(404);
     expect(response.body).toEqual(expectedBinError);
   });

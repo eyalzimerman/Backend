@@ -16,7 +16,7 @@ const blankBinCheck = (request, response, next) => {
 const checkID = (request, response, next) => {
   const { id } = request.params;
   if (id.length !== 13 || /\D/.test(id)) {
-    response.status(400).send({ message: "ID cannot be found" });
+    response.status(400).send({ message: "Invalid ID" });
     return;
   }
   next();
@@ -26,7 +26,7 @@ const checkBin = (request, response, next) => {
   let allUsers = fs.readdirSync("./backend/bins");
   const { id } = request.params;
   if (!allUsers.includes(`${id}.json`)) {
-    response.status(404).send({ message: "Invalid ID" });
+    response.status(404).send({ message: "ID cannot be found" });
   } else {
     next();
   }

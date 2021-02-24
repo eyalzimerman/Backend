@@ -80,7 +80,7 @@ router.put("/:id", checkID, checkBin, blankBinCheck, (request, response) => {
   }
 });
 
-router.delete("/:id", checkID, (request, response) => {
+router.delete("/:id", checkID, checkBin, (request, response) => {
   try {
     let allUsers = fs.readdirSync("./backend/bins");
     const { id } = request.params;
